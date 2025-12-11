@@ -54,16 +54,6 @@ export function About() {
           {/* Left: Sticky Image Column */}
           <div className="relative lg:sticky lg:top-32 h-fit">
             <motion.div style={{ y: imageY, opacity }}>
-              {/* Large Number */}
-              <motion.div
-                initial={{ opacity: 0, x: -100 }}
-                animate={isInView ? { opacity: 0.1, x: 0 } : {}}
-                transition={{ duration: 1 }}
-                className="hidden md:block absolute -top-20 -left-10 text-[150px] md:text-[200px] lg:text-[300px] text-white pointer-events-none select-none"
-              >
-                01
-              </motion.div>
-
               {/* Image Grid */}
               <div className="relative z-10">
                 <motion.div
@@ -164,24 +154,7 @@ export function About() {
               </div>
             </motion.div>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="grid grid-cols-3 gap-4 md:gap-8 pt-8"
-            >
-              {[
-                { number: '5+', label: 'Tahun Pengalaman' },
-                { number: '1000+', label: 'Pot Terjual' },
-                { number: '98%', label: 'Kepuasan Pelanggan' }
-              ].map((stat, index) => (
-                <div key={index} className="text-center space-y-1 md:space-y-2">
-                  <p className="text-3xl md:text-4xl lg:text-5xl text-[#d99a73]">{stat.number}</p>
-                  <p className="text-xs md:text-sm text-white/60 tracking-wider">{stat.label}</p>
-                </div>
-              ))}
-            </motion.div>
+            
           </motion.div>
         </div>
       </div>

@@ -10,8 +10,7 @@ export function Footer() {
 
   const footerLinks = {
     produk: ['Terracotta Classic', 'Concrete Modern', 'Professional Series', 'Custom Order'],
-    perusahaan: ['Tentang Kami', 'Visi & Misi', 'Nilai-Nilai', 'Hubungi Kami'],
-    sumber: ['Blog', 'Katalog', 'Perawatan Pot', 'FAQ']
+    perusahaan: ['Visi & Misi', 'Nilai-Nilai', 'Hubungi Kami'],
   };
 
   return (
