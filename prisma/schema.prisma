@@ -1,0 +1,37 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  subtitle    String?
+  description String   @db.Text // Menggunakan Text agar bisa menampung deskripsi panjang
+  image       String
+  tag         String?
+  color       String?
+  size        String?
+  dimensions  String?
+  price       String   // Kita simpan string dulu agar format "Rp 450.000" aman
+  category    String
+  featured    Boolean  @default(false)
+  stock       String   // "In Stock", "Limited", dll
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
