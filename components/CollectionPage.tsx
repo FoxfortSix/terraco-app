@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { ArrowLeft, Filter, Grid3x3, LayoutGrid, Search, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Filter, Grid3x3, LayoutGrid, Search, Star, X } from 'lucide-react';
 import Link from 'next/link';
 import { Footer } from './Footer';
 import { Logo } from './Logo';
 
-// Tipe Data Baru dengan Variants
+// Definisi tipe data
 type Variant = {
   id: number;
   size: string;
@@ -27,28 +27,49 @@ type Product = {
   color?: string | null;
   category: string;
   featured: boolean;
-  variants: Variant[]; // Array Varian
+  variants: Variant[];
   collection?: string | null;
 };
 
 const categories = [
   { id: 'all', name: 'Semua Produk', color: '#7a746d' },
-  { id: 'terracotta', name: 'Terracotta Classic', color: '#d99a73' },
-  { id: 'concrete', name: 'Concrete Modern', color: '#9cab8a' },
-  { id: 'professional', name: 'Professional Series', color: '#7a746d' },
-  { id: 'artisan', name: 'Artisan Collection', color: '#d8d2c7' }
+  { id: 'LTN', name: 'Luna Terrazo Natural', color: '#d99a73' },
+  { id: 'LN', name: 'Luna Natural', color: '#9cab8a' },
+  { id: 'LG', name: 'Luna Glossy', color: '#7a746d' },
+  { id: 'NG', name: 'Nara Glossy', color: '#d8d2c7' }
 ];
 
 export function CollectionPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // State UI
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSize, setSelectedSize] = useState('All Sizes');
   const [searchQuery, setSearchQuery] = useState('');
   const [gridView, setGridView] = useState<'grid' | 'list'>('grid');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Helper untuk format Rupiah
+  // --- EFEK PARALLAX ---
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
+  // Detect Mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Helper Functions
   const formatRupiah = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -57,42 +78,41 @@ export function CollectionPage() {
     }).format(price);
   };
 
-  // Helper untuk mendapatkan range harga
   const getPriceRange = (variants: Variant[]) => {
     if (!variants || variants.length === 0) return 'Hubungi Kami';
     const prices = variants.map(v => v.price);
     const min = Math.min(...prices);
     const max = Math.max(...prices);
-    
     if (min === max) return formatRupiah(min);
     return `${formatRupiah(min)} - ${formatRupiah(max)}`;
   };
 
-  // Helper WhatsApp dengan Varian
+  const getAvailableSizes = (variants: Variant[]) => {
+    if (!variants || variants.length === 0) return '';
+    const uniqueSizes = Array.from(new Set(variants.map(v => v.size)));
+    return uniqueSizes.join(', ');
+  };
+
   const handleContact = (product: Product) => {
-    const phoneNumber = "6281234567890"; // Ganti nomor Anda
-    
-    // List varian untuk pesan
+    const phoneNumber = "6281234567890";
     const variantsList = product.variants.map(v => `- ${v.size} (${v.dimensions}): ${formatRupiah(v.price)}`).join('\n');
-    
     const message = `Halo Terraco, saya tertarik dengan produk: *${product.name}*.\n\nSaya melihat varian:\n${variantsList}\n\nApakah stok tersedia?`;
-    
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
+  // Fetch Data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch('/api/products');
         if (!res.ok) throw new Error('Gagal mengambil data');
         const data = await res.json();
-        
         const mappedData = data.map((item: any) => ({
           ...item,
-          collection: item.subtitle || item.category
+          collection: item.subtitle || item.category,
+          color: item.color || '#7a746d' 
         }));
-
         setProducts(mappedData);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -100,29 +120,18 @@ export function CollectionPage() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
   const filteredProducts = products.filter(product => {
     if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
+    if (selectedSize !== 'All Sizes' && !product.variants.some(v => v.size.toLowerCase().includes(selectedSize.toLowerCase()))) return false;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      return (
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query)
-      );
+      return product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query);
     }
     return true;
   });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f7f6f3] flex items-center justify-center">
-        <div className="text-2xl text-[#7a746d] animate-pulse">Memuat Produk...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
@@ -132,10 +141,7 @@ export function CollectionPage() {
           className="absolute inset-0 opacity-10"
           animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
           transition={{ duration: 20, repeat: Infinity, repeatType: 'reverse' }}
-          style={{
-            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-            backgroundSize: '50px 50px',
-          }}
+          style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}
         />
         <div className="container mx-auto px-6 relative">
           <Link href="/">
@@ -147,12 +153,7 @@ export function CollectionPage() {
               <span>Kembali ke Beranda</span>
             </motion.button>
           </Link>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl"
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-3xl">
             <div className="flex items-center gap-4 mb-6">
               <Logo className="w-16 h-16 md:w-20 md:h-20" color="white" />
               <div>
@@ -190,11 +191,7 @@ export function CollectionPage() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-6 py-2 rounded-full text-sm transition-all border ${
-                    selectedCategory === cat.id 
-                      ? `bg-[${cat.color}] text-white border-[${cat.color}]` 
-                      : 'bg-[#f7f6f3] text-[#7a746d] border-[#d8d2c7]'
-                  }`}
+                  className={`px-6 py-2 rounded-full text-sm transition-all border ${selectedCategory === cat.id ? `text-white` : 'bg-[#f7f6f3] text-[#7a746d] border-[#d8d2c7]'}`}
                   style={selectedCategory === cat.id ? { backgroundColor: cat.color, borderColor: cat.color } : {}}
                 >
                   {cat.name}
@@ -213,64 +210,220 @@ export function CollectionPage() {
         </div>
       </div>
 
-      {/* Products Grid */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <p className="text-[#7a746d]">Menampilkan <span className="font-medium">{filteredProducts.length}</span> produk</p>
-        </div>
+      {/* Main Content */}
+      <section ref={sectionRef} className="container mx-auto px-6 py-16">
+        {loading ? (
+          <div className="flex items-center justify-center py-32">
+             <div className="text-2xl text-[#7a746d] animate-pulse">Memuat Produk...</div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-8">
+              <p className="text-[#7a746d]">Menampilkan <span className="font-medium">{filteredProducts.length}</span> produk</p>
+            </div>
 
-        <motion.div layout className={gridView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" : "space-y-6"}>
-          <AnimatePresence>
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
+            {/* --- GRID VIEW --- */}
+            {gridView === 'grid' && (
+              <motion.div 
                 layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                className={`group cursor-pointer ${gridView === 'list' ? 'bg-white rounded-2xl overflow-hidden flex' : ''}`}
-                onClick={() => setSelectedProduct(product)}
+                style={{ y }} 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-[400px]"
               >
-                <div className={`relative ${gridView === 'grid' ? 'aspect-square mb-4' : 'w-80 aspect-square'} overflow-hidden rounded-2xl bg-white shadow-md`}>
-                  <ImageWithFallback
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Badges */}
-                  <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    {product.featured && <span className="px-3 py-1 bg-[#d99a73] text-white text-xs rounded-full">Featured</span>}
-                  </div>
-                </div>
+                <AnimatePresence>
+                  {filteredProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.8, delay: index * 0.05, ease: "easeOut" }}
+                      className="relative group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 bg-gray-100"
+                      onMouseEnter={() => setHoveredId(product.id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      onClick={() => setSelectedProduct(product)}
+                    >
+                      <motion.div 
+                        className="absolute inset-0"
+                        animate={{ scale: isMobile ? 1 : (hoveredId === product.id ? 1.1 : 1) }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      >
+                        <ImageWithFallback
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                      </motion.div>
 
-                <div className={gridView === 'list' ? 'flex-1 p-8 flex flex-col justify-between' : 'space-y-2'}>
-                  <div>
-                    <p className="text-xs text-[#7a746d]/60 tracking-wider uppercase mb-1">{product.collection}</p>
-                    <h3 className={`text-[#7a746d] group-hover:text-[#d99a73] transition-colors ${gridView === 'list' ? 'text-3xl' : 'text-xl'}`}>
-                      {product.name}
-                    </h3>
-                    {/* MENAMPILKAN RANGE HARGA */}
-                    <p className={`text-[#d99a73] font-medium ${gridView === 'list' ? 'text-2xl mt-2' : ''}`}>
-                      {getPriceRange(product.variants)}
-                    </p>
-                    
-                    {/* MENAMPILKAN DAFTAR UKURAN (Preview) */}
-                    <div className="flex gap-2 mt-2 flex-wrap">
-                      {product.variants.map((v, i) => (
-                        <span key={i} className="text-xs border border-[#d8d2c7] px-2 py-1 rounded text-[#7a746d]/80">
-                          {v.size}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                      <motion.div
+                        className="absolute inset-0 mix-blend-multiply"
+                        style={{ backgroundColor: product.color || '#d99a73' }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: isMobile ? 0 : (hoveredId === product.id ? 0.9 : 0) }}
+                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                      />
+
+                      <div className="relative h-full p-8 flex flex-col justify-between text-white z-20">
+                        <div className="self-start">
+                          <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-sm rounded-full bg-white/20">
+                            <Star className="w-3 h-3 fill-white" />
+                            <span className="tracking-wider text-xs uppercase">{product.tag || 'Available'}</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-white/80 tracking-widest text-xs uppercase font-medium">
+                            {product.collection || product.category}
+                          </p>
+                          <h3 className="text-2xl md:text-3xl font-light">{product.name}</h3>
+                          
+                          <div>
+                            <p className="text-[#d99a73] text-lg font-medium">
+                              {getPriceRange(product.variants)}
+                            </p>
+                            {product.variants.length > 0 && (
+                              <p className="text-white/70 text-xs mt-1 font-light tracking-wide">
+                                Size: {getAvailableSizes(product.variants)}
+                              </p>
+                            )}
+                          </div>
+
+                          {!isMobile && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ 
+                                height: hoveredId === product.id ? 'auto' : 0,
+                                opacity: hoveredId === product.id ? 1 : 0,
+                                marginTop: hoveredId === product.id ? 16 : 0
+                              }}
+                              className="overflow-hidden"
+                            >
+                              <div className="w-full py-3 bg-white text-[#7a746d] rounded-full text-center text-sm font-medium uppercase tracking-wider hover:bg-[#d99a73] hover:text-white transition-colors">
+                                Lihat Detail
+                              </div>
+                            </motion.div>
+                          )}
+                        </div>
+                      </div>
+
+                      <motion.div
+                        className="absolute top-4 right-4 text-7xl text-white/10 pointer-events-none select-none font-bold"
+                        animate={{ scale: hoveredId === product.id ? 1.1 : 1 }}
+                        transition={{ duration: 0.8 }}
+                      >
+                        0{index + 1}
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+            )}
+
+            {/* --- LIST VIEW (Horizontal Card) --- */}
+            {gridView === 'list' && (
+              <motion.div layout className="space-y-6">
+                {filteredProducts.map((product) => (
+                  <motion.div
+                    key={product.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5 }}
+                    className="group cursor-pointer bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-md hover:shadow-xl transition-all duration-500"
+                    onClick={() => setSelectedProduct(product)}
+                    onMouseEnter={() => !isMobile && setHoveredId(product.id)}
+                    onMouseLeave={() => !isMobile && setHoveredId(null)}
+                  >
+                    {/* Image Section */}
+                    <div className="w-full md:w-72 aspect-square md:aspect-auto relative overflow-hidden">
+                       <motion.div
+                         className="w-full h-full"
+                         animate={{ scale: !isMobile && hoveredId === product.id ? 1.1 : 1 }}
+                         transition={{ duration: 0.8, ease: "easeOut" }}
+                       >
+                         <ImageWithFallback 
+                           src={product.image} 
+                           alt={product.name} 
+                           className="w-full h-full object-cover" 
+                         />
+                       </motion.div>
+                       {/* Overlay list view */}
+                       <motion.div
+                          className="absolute inset-0 mix-blend-multiply"
+                          style={{ backgroundColor: product.color || '#d99a73' }}
+                          animate={{ opacity: !isMobile && hoveredId === product.id ? 0.3 : 0 }}
+                          transition={{ duration: 0.6 }}
+                       />
+                       
+                       <div className="absolute top-4 left-4">
+                          <div className="flex items-center gap-2 px-3 py-1.5 backdrop-blur-md bg-white/30 rounded-full text-white">
+                            <Star className="w-3 h-3 fill-white" />
+                            <span className="tracking-wider text-[10px] uppercase">{product.tag || 'Available'}</span>
+                          </div>
+                       </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex-1 p-6 md:p-8 flex flex-col justify-center relative">
+                       <div className="space-y-3">
+                          <div>
+                             <p className="text-xs text-[#7a746d]/60 tracking-widest uppercase font-medium mb-1">
+                               {product.collection || product.category}
+                             </p>
+                             <h3 className="text-2xl md:text-3xl text-[#7a746d] font-light">
+                               {product.name}
+                             </h3>
+                          </div>
+
+                          <div>
+                             <p className="text-[#d99a73] text-xl font-medium">
+                               {getPriceRange(product.variants)}
+                             </p>
+                             {product.variants.length > 0 && (
+                                <p className="text-[#7a746d]/70 text-sm mt-1">
+                                  Size: {getAvailableSizes(product.variants)}
+                                </p>
+                             )}
+                          </div>
+
+                          <p className="text-[#7a746d]/60 text-sm leading-relaxed line-clamp-2 md:line-clamp-none max-w-2xl">
+                            {product.description}
+                          </p>
+
+                          {/* Button for Desktop List View */}
+                          {!isMobile && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ 
+                                height: hoveredId === product.id ? 'auto' : 0,
+                                opacity: hoveredId === product.id ? 1 : 0,
+                                marginTop: hoveredId === product.id ? 12 : 0
+                              }}
+                              className="overflow-hidden"
+                            >
+                               <div className="inline-flex items-center gap-2 text-[#d99a73] font-medium uppercase tracking-wider text-sm hover:underline">
+                                  <span>Lihat Detail Lengkap</span>
+                                  <ArrowUpRight className="w-4 h-4" />
+                               </div>
+                            </motion.div>
+                          )}
+                       </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+
+            {/* Empty State */}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-20 text-[#7a746d]/60">
+                Tidak ada produk ditemukan.
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {/* Detail Modal */}
