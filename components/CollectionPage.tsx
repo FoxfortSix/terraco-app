@@ -136,7 +136,7 @@ export function CollectionPage() {
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
       {/* Hero Header */}
-      <section className="relative bg-gradient-to-br from-[#d99a73] to-[#7a746d] text-white py-32 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-[#d99a73] to-[#7a746d] text-white py-10 overflow-hidden">
         <motion.div
           className="absolute inset-0 opacity-10"
           animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
