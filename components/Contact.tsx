@@ -105,7 +105,7 @@ export function Contact() {
                       <info.icon 
                         className="w-5 h-5 md:w-7 md:h-7 group-hover:text-[#2c2a27] transition-colors duration-300" 
                         style={{ color: info.color }}
-                      />
+                      />  
                     </motion.div>
                     
                     <div className="space-y-0.5 md:space-y-1">
