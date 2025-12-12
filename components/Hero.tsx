@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { ArrowDown } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -101,21 +102,23 @@ export function Hero() {
                 transition={{ delay: 1.5, duration: 0.8 }}
                 className="pt-4"
               >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="group relative px-8 py-3 bg-[#7a746d] text-white overflow-hidden shadow-lg"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-[#d99a73] to-[#9cab8a]"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <span className="relative z-10 tracking-widest text-xs sm:text-sm uppercase font-medium">
-                    Lihat Katalog
-                  </span>
-                </motion.button>
+                <Link href="/collections">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group relative px-8 py-3 bg-[#7a746d] text-white overflow-hidden shadow-lg"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-[#d99a73] to-[#9cab8a]"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <span className="relative z-10 tracking-widest text-xs sm:text-sm uppercase font-medium">
+                      Lihat Katalog
+                    </span>
+                  </motion.button>
+                </Link>
               </motion.div>
             </motion.div>
 
@@ -138,7 +141,7 @@ export function Hero() {
                   transition={{ duration: 1, delay: 0.2 }}
                 >
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1701271040533-59a76ac4e887?auto=format&q=80&w=1080"
+                    src="/images/LunaNaturalSeriesCover.jpg"
                     alt="Terraco Premium Pots"
                     className="w-full h-full object-cover"
                   />
@@ -152,7 +155,7 @@ export function Hero() {
                   transition={{ duration: 1, delay: 0.5 }}
                 >
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1763136241763-0801a85b3b35?auto=format&q=80&w=1080"
+                    src="/images/LunaTerrazoNaturalSeriesCover.jpg"
                     alt="Pottery Detail"
                     className="w-full h-full object-cover"
                   />

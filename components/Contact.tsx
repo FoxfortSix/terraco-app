@@ -29,21 +29,15 @@ export function Contact() {
 
   const contactInfo = [
     {
-      icon: Mail,
-      title: 'Email',
-      value: 'hello@terraco.com',
-      color: '#d99a73'
-    },
-    {
       icon: Phone,
       title: 'Telepon',
-      value: '+62 812-3456-7890',
+      value: '+62 851-5797-9618',
       color: '#9cab8a'
     },
     {
       icon: MapPin,
       title: 'Alamat',
-      value: 'Jakarta, Indonesia',
+      value: 'Lembang, Bandung, Indonesia',
       color: '#7a746d'
     }
   ];
@@ -107,8 +101,6 @@ export function Contact() {
                       style={{ 
                         backgroundColor: `${info.color}20`,
                       }}
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
                     >
                       <info.icon 
                         className="w-5 h-5 md:w-7 md:h-7 group-hover:text-[#2c2a27] transition-colors duration-300" 

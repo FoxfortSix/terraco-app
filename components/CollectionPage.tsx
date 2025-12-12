@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { ArrowLeft, ArrowUpRight, Filter, Grid3x3, LayoutGrid, Search, Star, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Filter, Grid3x3, LayoutGrid, Search, Star, X, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { Footer } from './Footer';
 import { Logo } from './Logo';
@@ -33,11 +33,13 @@ type Product = {
 
 const categories = [
   { id: 'all', name: 'Semua Produk', color: '#7a746d' },
-  { id: 'luna-terrazo', name: 'Luna Terrazo', color: '#E0D8CC' }, // Krem Batu
-  { id: 'luna-natural', name: 'Luna Natural', color: '#A89F91' }, // Abu Tanah
-  { id: 'luna-glosy', name: 'Luna Glosy', color: '#555555' },    // Abu Gelap
-  { id: 'nara-glosy', name: 'Nara Glosy', color: '#D8C8B8' }     // Krem Elegan
+  { id: 'luna-terrazo', name: 'Luna Terrazo', color: '#E0D8CC' },
+  { id: 'luna-natural', name: 'Luna Natural', color: '#A89F91' },
+  { id: 'luna-glosy', name: 'Luna Glosy', color: '#555555' },
+  { id: 'nara-glosy', name: 'Nara Glosy', color: '#D8C8B8' }
 ];
+
+const sizes = ['All Sizes', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
 
 export function CollectionPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -94,7 +96,7 @@ export function CollectionPage() {
   };
 
   const handleContact = (product: Product) => {
-    const phoneNumber = "6281234567890";
+    const phoneNumber = "6285157979618";
     const variantsList = product.variants.map(v => `- ${v.size} (${v.dimensions}): ${formatRupiah(v.price)}`).join('\n');
     const message = `Halo Terraco, saya tertarik dengan produk: *${product.name}*.\n\nSaya melihat varian:\n${variantsList}\n\nApakah stok tersedia?`;
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -104,7 +106,7 @@ export function CollectionPage() {
   // Fetch Data
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
+      try { 
         const res = await fetch('/api/products');
         if (!res.ok) throw new Error('Gagal mengambil data');
         const data = await res.json();
@@ -125,7 +127,7 @@ export function CollectionPage() {
 
   const filteredProducts = products.filter(product => {
     if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-    if (selectedSize !== 'All Sizes' && !product.variants.some(v => v.size.toLowerCase().includes(selectedSize.toLowerCase()))) return false;
+    if (selectedSize !== 'All Sizes' && !product.variants.some(v => v.size.toLowerCase() === selectedSize.toLowerCase())) return false;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return product.name.toLowerCase().includes(query) || product.description.toLowerCase().includes(query);
@@ -176,7 +178,8 @@ export function CollectionPage() {
       <div className="sticky top-0 z-40 bg-white shadow-sm border-b border-[#d8d2c7]/30">
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
-            <div className="relative flex-1 max-w-md">
+            {/* Search Bar */}
+            <div className="relative flex-1 max-w-md w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#7a746d]/40" />
               <input
                 type="text"
@@ -186,6 +189,8 @@ export function CollectionPage() {
                 className="w-full pl-12 pr-4 py-3 rounded-full border border-[#d8d2c7] focus:outline-none focus:border-[#d99a73] transition-colors bg-[#f7f6f3]"
               />
             </div>
+
+            {/* Desktop Filters */}
             <div className="hidden lg:flex gap-2 flex-wrap">
               {categories.map((cat) => (
                 <button
@@ -198,7 +203,9 @@ export function CollectionPage() {
                 </button>
               ))}
             </div>
-            <div className="hidden md:flex gap-2 bg-[#f7f6f3] p-1 rounded-full">
+
+            {/* Desktop View Toggle */}
+            <div className="hidden lg:flex gap-2 bg-[#f7f6f3] p-1 rounded-full">
               <button onClick={() => setGridView('grid')} className={`p-2 rounded-full transition-colors ${gridView === 'grid' ? 'bg-[#d99a73] text-white' : 'text-[#7a746d]'}`}>
                 <Grid3x3 className="w-5 h-5" />
               </button>
@@ -206,6 +213,92 @@ export function CollectionPage() {
                 <LayoutGrid className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Mobile Filter & View Toggle Row */}
+            <div className="flex lg:hidden items-center justify-between w-full gap-4">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white transition-colors ${isFilterOpen ? 'bg-[#7a746d]' : 'bg-[#d99a73]'}`}
+              >
+                <Filter className="w-4 h-4" />
+                <span>Filter {selectedCategory !== 'all' || selectedSize !== 'All Sizes' ? '(Aktif)' : ''}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <div className="flex gap-2 bg-[#f7f6f3] p-1 rounded-full shrink-0">
+                <button onClick={() => setGridView('grid')} className={`p-2 rounded-full transition-colors ${gridView === 'grid' ? 'bg-[#d99a73] text-white' : 'text-[#7a746d]'}`}>
+                  <Grid3x3 className="w-5 h-5" />
+                </button>
+                <button onClick={() => setGridView('list')} className={`p-2 rounded-full transition-colors ${gridView === 'list' ? 'bg-[#d99a73] text-white' : 'text-[#7a746d]'}`}>
+                  <LayoutGrid className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Filter Panel */}
+            <AnimatePresence>
+              {isFilterOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="lg:hidden w-full overflow-hidden"
+                >
+                  <div className="pt-4 pb-2 space-y-6 border-t border-[#d8d2c7]/30 mt-2">
+                    {/* Category Filter */}
+                    <div className="space-y-3">
+                      <h4 className="text-xs font-bold text-[#7a746d] uppercase tracking-wider">Kategori</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {categories.map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat.id)}
+                            className={`px-4 py-2 rounded-full text-xs transition-all border ${
+                              selectedCategory === cat.id 
+                                ? 'text-white shadow-sm' 
+                                : 'bg-white text-[#7a746d] border-[#d8d2c7]'
+                            }`}
+                            style={selectedCategory === cat.id ? { backgroundColor: cat.color, borderColor: cat.color } : {}}
+                          >
+                            {cat.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Size Filter */}
+                    <div className="space-y-3">
+                      <h4 className="text-xs font-bold text-[#7a746d] uppercase tracking-wider">Ukuran</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {sizes.map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-4 py-2 rounded-full text-xs transition-all border ${
+                              selectedSize === size 
+                                ? 'bg-[#7a746d] text-white border-[#7a746d] shadow-sm' 
+                                : 'bg-white text-[#7a746d] border-[#d8d2c7]'
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Reset Button */}
+                    {(selectedCategory !== 'all' || selectedSize !== 'All Sizes') && (
+                      <button 
+                        onClick={() => { setSelectedCategory('all'); setSelectedSize('All Sizes'); }}
+                        className="text-xs text-[#d99a73] underline hover:text-[#7a746d]"
+                      >
+                        Reset Filter
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -243,6 +336,7 @@ export function CollectionPage() {
                       onMouseLeave={() => setHoveredId(null)}
                       onClick={() => setSelectedProduct(product)}
                     >
+                      {/* Image */}
                       <motion.div 
                         className="absolute inset-0"
                         animate={{ scale: isMobile ? 1 : (hoveredId === product.id ? 1.1 : 1) }}
@@ -256,6 +350,7 @@ export function CollectionPage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
                       </motion.div>
 
+                      {/* Overlay Color */}
                       <motion.div
                         className="absolute inset-0 mix-blend-multiply"
                         style={{ backgroundColor: product.color || '#d99a73' }}
@@ -264,6 +359,7 @@ export function CollectionPage() {
                         transition={{ duration: 0.6, ease: "easeInOut" }}
                       />
 
+                      {/* Content */}
                       <div className="relative h-full p-8 flex flex-col justify-between text-white z-20">
                         <div className="self-start">
                           <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-sm rounded-full bg-white/20">
@@ -320,7 +416,7 @@ export function CollectionPage() {
               </motion.div>
             )}
 
-            {/* --- LIST VIEW (Horizontal Card) --- */}
+            {/* --- LIST VIEW --- */}
             {gridView === 'list' && (
               <motion.div layout className="space-y-6">
                 {filteredProducts.map((product) => (
@@ -336,7 +432,6 @@ export function CollectionPage() {
                     onMouseEnter={() => !isMobile && setHoveredId(product.id)}
                     onMouseLeave={() => !isMobile && setHoveredId(null)}
                   >
-                    {/* Image Section */}
                     <div className="w-full md:w-72 aspect-square md:aspect-auto relative overflow-hidden">
                        <motion.div
                          className="w-full h-full"
@@ -349,7 +444,6 @@ export function CollectionPage() {
                            className="w-full h-full object-cover" 
                          />
                        </motion.div>
-                       {/* Overlay list view */}
                        <motion.div
                           className="absolute inset-0 mix-blend-multiply"
                           style={{ backgroundColor: product.color || '#d99a73' }}
@@ -365,7 +459,6 @@ export function CollectionPage() {
                        </div>
                     </div>
 
-                    {/* Content Section */}
                     <div className="flex-1 p-6 md:p-8 flex flex-col justify-center relative">
                        <div className="space-y-3">
                           <div>
@@ -392,7 +485,6 @@ export function CollectionPage() {
                             {product.description}
                           </p>
 
-                          {/* Button for Desktop List View */}
                           {!isMobile && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}

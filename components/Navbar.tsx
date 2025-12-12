@@ -113,23 +113,17 @@ export function Navbar() {
 
             {/* CTA Button */}
             <motion.a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                handleClick('#contact');
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative px-6 py-3 bg-gradient-to-r from-[#d99a73] to-[#9cab8a] text-white overflow-hidden group"
+              href="https://wa.me/6285157979618?text=Halo%20Terraco%2C%20saya%20tertarik%20dengan%20produk%20kalian."
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="relative px-6 py-3 bg-gradient-to-r from-[#d99a73] to-[#9cab8a] 
+                text-white rounded-md shadow-md transition-all duration-300"
             >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-[#7a746d] to-[#9cab8a]"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
               <span className="relative tracking-wider">Hubungi</span>
             </motion.a>
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -200,19 +194,19 @@ export function Navbar() {
                 </motion.a>
               ))}
 
-              <motion.a
-                href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleClick('#contact');
-                }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="block w-full mt-6 py-4 bg-gradient-to-r from-[#d99a73] to-[#9cab8a] text-white text-center text-xl tracking-wider"
-              >
-                Hubungi Kami
-              </motion.a>
+            <motion.a
+              href="https://wa.me/6285157979618?text=Halo%20Terraco%2C%20saya%20tertarik%20dengan%20produk%20kalian."
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="block w-full mt-6 py-4 bg-gradient-to-r from-[#d99a73] to-[#9cab8a] 
+                text-white text-center text-xl tracking-wider rounded-md shadow"
+            >
+              Hubungi Kami
+            </motion.a>
+
             </div>
           </motion.div>
         )}
