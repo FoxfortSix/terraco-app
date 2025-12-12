@@ -9,22 +9,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Parent: Data Produk Umum
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
   subtitle    String?
-  description String   @db.Text // Menggunakan Text agar bisa menampung deskripsi panjang
+  description String           @db.Text
   image       String
+  category    String
   tag         String?
   color       String?
-  size        String?
-  dimensions  String?
-  price       String   // Kita simpan string dulu agar format "Rp 450.000" aman
-  category    String
-  featured    Boolean  @default(false)
-  stock       String   // "In Stock", "Limited", dll
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  featured    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  
+  // INI PENTING: Relasi ke tabel varian
+  variants    ProductVariant[] 
+}
+
+// Child: Varian Ukuran & Harga (Tabel Baru)
+model ProductVariant {
+  id         Int     @id @default(autoincrement())
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  size       String
+  dimensions String?
+  price      Int     // Harga sekarang jadi angka (Int)
+  stock      String
 }
 
 model ContactMessage {
