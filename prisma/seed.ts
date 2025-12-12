@@ -1,68 +1,205 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+// Data Produk Baru Sesuai Request
 const products = [
+  // --- KATEGORI 1: LUNA TERRAZO NATURAL ---
   {
-    name: 'Terracotta Signature',
-    subtitle: 'Raw Earth Series',
-    description: 'Keindahan ketidaksempurnaan alami. Tekstur tanah liat mentah yang dibakar sempurna.',
-    image: '/images/IMG_20251129_101902.bak.bak.jpg',
-    category: 'terracotta',
-    tag: 'Signature',
-    color: '#d99a73',
-    featured: true,
-    variants: {
-      create: [
-        { size: 'Small', dimensions: '15cm x 15cm', price: 150000, stock: 'In Stock' },
-        { size: 'Medium', dimensions: '25cm x 25cm', price: 280000, stock: 'In Stock' },
-        { size: 'Large', dimensions: '40cm x 40cm', price: 450000, stock: 'Limited' },
-      ]
-    }
-  },
-  {
-    name: 'Artisan Curve',
-    subtitle: 'Handmade Craft',
-    description: 'Lengkungan dinamis yang dibentuk dengan tangan pengrajin ahli.',
-    image: '/images/IMG_20251129_102102.bak.jpg',
-    category: 'terracotta',
+    name: 'Luna Terrazo Cylinder',
+    subtitle: 'Natural Stone Series',
+    description: 'Pot silinder dengan tekstur terrazo alami yang unik. Memberikan sentuhan artistik dan kokoh untuk tanaman indoor maupun outdoor.',
+    image: '/images/LunaTerrazoNatural (1).jpg',
+    category: 'luna-terrazo',
     tag: 'Best Seller',
-    color: '#9cab8a',
+    color: '#E0D8CC', // Warna krem/batu
     featured: true,
     variants: {
       create: [
-        { size: 'Medium', dimensions: '30cm x 28cm', price: 320000, stock: 'In Stock' },
-        { size: 'Large', dimensions: '45cm x 42cm', price: 550000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 185000, stock: 'In Stock' },
+        { size: 'M', dimensions: '30cm x 30cm', price: 325000, stock: 'In Stock' },
+        { size: 'L', dimensions: '40cm x 40cm', price: 550000, stock: 'Limited' },
       ]
     }
   },
   {
-    name: 'Modern Cylinder',
-    subtitle: 'Minimalist Form',
-    description: 'Siluet tegas dan bersih untuk hunian kontemporer.',
-    image: '/images/IMG_20251129_102636.bak.bak.jpg',
-    category: 'concrete',
-    tag: 'New Arrival',
-    color: '#7a746d',
-    featured: true,
+    name: 'Luna Terrazo Bowl',
+    subtitle: 'Wide Planter',
+    description: 'Bentuk mangkuk lebar yang elegan, sempurna untuk tanaman berakar serabut atau penataan succulent.',
+    image: '/images/LunaTerrazoNatural (2).jpg',
+    category: 'luna-terrazo',
+    tag: 'New',
+    color: '#E0D8CC',
+    featured: false,
     variants: {
       create: [
-        { size: 'Small', dimensions: '20cm x 20cm', price: 180000, stock: 'In Stock' },
-        { size: 'Medium', dimensions: '30cm x 30cm', price: 290000, stock: 'In Stock' },
+        { size: 'M', dimensions: '35cm x 15cm', price: 295000, stock: 'In Stock' },
+        { size: 'L', dimensions: '50cm x 20cm', price: 480000, stock: 'In Stock' },
       ]
     }
   },
   {
-    name: 'Heritage Pot',
-    subtitle: 'Timeless Classic',
-    description: 'Inspirasi bentuk kuno dengan finishing natural.',
-    image: '/images/IMG_20251129_110211.bak.bak.jpg',
-    category: 'artisan',
+    name: 'Luna Terrazo Vase',
+    subtitle: 'Tall Statement',
+    description: 'Pot tinggi ramping yang ideal untuk sudut ruangan atau pintu masuk.',
+    image: '/images/LunaTerrazoNatural (3).jpg',
+    category: 'luna-terrazo',
+    tag: 'Premium',
+    color: '#E0D8CC',
+    featured: false,
+    variants: {
+      create: [
+        { size: 'M', dimensions: '25cm x 50cm', price: 450000, stock: 'In Stock' },
+        { size: 'L', dimensions: '35cm x 70cm', price: 750000, stock: 'Limited' },
+      ]
+    }
+  },
+
+  // --- KATEGORI 2: LUNA NATURAL ---
+  {
+    name: 'Luna Natural Series',
+    subtitle: 'Authentic Earth',
+    description: 'Kembali ke alam dengan finishing tanah liat natural. Memiliki porositas yang baik untuk kesehatan akar tanaman.',
+    image: '/images/LunaNatural.jpg',
+    category: 'luna-natural',
+    tag: 'Classic',
+    color: '#A89F91', // Warna tanah/abu
+    featured: true,
+    variants: {
+      create: [
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 23000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 28000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 32500, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 44500, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 44500, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 55000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 55000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 70000, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 92500, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 155000, stock: 'In Stock' },
+      ]
+    }
+  },
+
+  // --- KATEGORI 3: LUNA GLOSY ---
+  {
+    name: 'Luna Glosy Black',
+    subtitle: 'Modern sleek',
+    description: 'Finishing mengkilap yang mewah dan modern. Mudah dibersihkan dan tahan lama.',
+    image: '/images/LunaGlossy (5).jpg',
+    category: 'luna-glosy',
+    tag: 'Modern',
+    color: '#333333', // Hitam
+    featured: true,
+    variants: {
+      create: [
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 40000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 45000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 60000, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 80000, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 80000, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 93000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 93000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 112500, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 150000, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 225000, stock: 'In Stock' },
+      ]
+    }
+  },
+  {
+    name: 'Luna Glosy White',
+    subtitle: 'Clean Minimalist',
+    description: 'Warna putih bersih dengan lapisan glossy untuk tampilan minimalis yang terang.',
+    image: '/images/LunaGlossy (6).jpg',
+    category: 'luna-glosy',
+    tag: 'Minimalist',
+    color: '#F5F5F5', // Putih
+    featured: false,
+    variants: {
+      create: [
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 40000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 45000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 60000, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 80000, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 80000, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 93000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 93000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 112500, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 150000, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 225000, stock: 'In Stock' },
+      ]
+    }
+  },
+  {
+    name: 'Luna Glosy Grey',
+    subtitle: 'Industrial Chic',
+    description: 'Abu-abu glossy yang netral, cocok untuk tema industrial atau monokrom.',
+    image: '/images/LunaGlossy (7).jpg',
+    category: 'luna-glosy',
+    tag: 'Industrial',
+    color: '#808080', // Abu
+    featured: false,
+    variants: {
+      create: [
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 40000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 45000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 60000, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 80000, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 80000, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 93000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 93000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 112500, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 150000, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 225000, stock: 'In Stock' },
+      ]
+    }
+  },
+
+  // --- KATEGORI 4: NARA GLOSY ---
+  {
+    name: 'Nara Glosy Curve',
+    subtitle: 'Elegant Series',
+    description: 'Desain Nara dengan lengkungan halus dan finishing glossy premium. Pilihan tepat untuk kemewahan.',
+    image: '/images/NaraGlossy (1).jpg',
+    category: 'nara-glosy',
     tag: 'Exclusive',
-    color: '#d8d2c7',
+    color: '#D8C8B8', // Krem/Goldish
     featured: true,
     variants: {
       create: [
-        { size: 'One Size', dimensions: '35cm x 35cm', price: 420000, stock: 'Limited' },
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 40000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 45000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 60000, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 80000, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 80000, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 93000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 93000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 112500, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 150000, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 225000, stock: 'In Stock' },
+      ]
+    }
+  },
+  {
+    name: 'Nara Glosy Tall',
+    subtitle: 'Statement Piece',
+    description: 'Varian tinggi dari seri Nara. Sangat memukau sebagai focal point ruangan.',
+    image: '/images/NaraGlossy (4).jpg',
+    category: 'nara-glosy',
+    tag: 'Luxury',
+    color: '#D8C8B8',
+    featured: false,
+    variants: {
+      create: [
+        { size: 'XXS', dimensions: '15cm x 15cm', price: 40000, stock: 'In Stock' },
+        { size: 'XS', dimensions: '15cm x 20cm', price: 45000, stock: 'In Stock' },
+        { size: 'S', dimensions: '20cm x 20cm', price: 60000, stock: 'In Stock' },
+        { size: 'XXM', dimensions: '20cm x 30cm', price: 80000, stock: 'In Stock' },
+        { size: 'XM', dimensions: '25cm x 25cm', price: 80000, stock: 'In Stock' },
+        { size: 'M', dimensions: '25cm x 35cm', price: 93000, stock: 'In Stock' },
+        { size: 'L', dimensions: '30cm x 30cm', price: 93000, stock: 'In Stock' },
+        { size: 'XL', dimensions: '30cm x 40cm', price: 112500, stock: 'In Stock' },
+        { size: 'XXL', dimensions: '40cm x 40cm', price: 150000, stock: 'In Stock' },
+        { size: 'XXXL', dimensions: '25cm x 55cm', price: 225000, stock: 'In Stock' },
       ]
     }
   }
@@ -70,7 +207,7 @@ const products = [
 
 async function main() {
   console.log('Start seeding ...')
-  // Hapus data lama agar tidak duplikat
+  // Bersihkan data lama
   await prisma.productVariant.deleteMany()
   await prisma.product.deleteMany()
 

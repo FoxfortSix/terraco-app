@@ -33,10 +33,10 @@ type Product = {
 
 const categories = [
   { id: 'all', name: 'Semua Produk', color: '#7a746d' },
-  { id: 'LTN', name: 'Luna Terrazo Natural', color: '#d99a73' },
-  { id: 'LN', name: 'Luna Natural', color: '#9cab8a' },
-  { id: 'LG', name: 'Luna Glossy', color: '#7a746d' },
-  { id: 'NG', name: 'Nara Glossy', color: '#d8d2c7' }
+  { id: 'luna-terrazo', name: 'Luna Terrazo', color: '#E0D8CC' }, // Krem Batu
+  { id: 'luna-natural', name: 'Luna Natural', color: '#A89F91' }, // Abu Tanah
+  { id: 'luna-glosy', name: 'Luna Glosy', color: '#555555' },    // Abu Gelap
+  { id: 'nara-glosy', name: 'Nara Glosy', color: '#D8C8B8' }     // Krem Elegan
 ];
 
 export function CollectionPage() {
